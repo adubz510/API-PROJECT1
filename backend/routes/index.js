@@ -8,7 +8,13 @@ const router = express.Router();
 //   res.send('Hello World!');
 // });
 
-// Add a XSRF-TOKEN cookie
+// Add a CSRF-TOKEN cookie
+// When using PostMan do the following:
+// Make sure you grab a valid XSRF token by following the route 
+// located in the index file OUTSIDE of your routes
+// /api/csrf/restore
+// Copy that return and apply to ANY and ALL requests made from that point on
+// You would add it to the headers in your request area
 router.get("/api/csrf/restore", (req, res) => {
     const csrfToken = req.csrfToken();
     res.cookie("XSRF-TOKEN", csrfToken);
