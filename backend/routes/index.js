@@ -8,7 +8,7 @@ const router = express.Router();
 //   res.send('Hello World!');
 // });
 
-// Add a CSRF-TOKEN cookie
+// Add a XSRF-TOKEN cookie
 // When using PostMan do the following:
 // Make sure you grab a valid XSRF token by following the route 
 // located in the index file OUTSIDE of your routes
