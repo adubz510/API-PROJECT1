@@ -13,9 +13,9 @@ const { restoreUser } = require("../../utils/auth.js");
 
   router.use('/users', usersRouter);
   
-  router.post('/test', (req, res) => {
-    res.json({ requestBody: req.body });
-  });
+//   router.post('/test', (req, res) => {
+//     res.json({ requestBody: req.body });
+//   });
 
 
   // Keep this route to test frontend setup in Mod 5
