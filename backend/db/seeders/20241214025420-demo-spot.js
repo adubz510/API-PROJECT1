@@ -48,7 +48,7 @@ module.exports = {
         description: "This is where Shrek lives",
         price: 99.00,
       },
-    ])
+    ], { validate: true });
   },
 
   async down (queryInterface, Sequelize) {
