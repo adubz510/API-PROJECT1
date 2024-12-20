@@ -4,7 +4,8 @@ const { Op } = require('sequelize');
 const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
-const { User } = require('../../db/models');
+const { Spot, User, Review, Booking, SpotImage, ReviewImage } = require('../../db/models');
+const { spotsWithPreviewAndRating } = require('./spots.js')
 
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
@@ -25,8 +26,47 @@ const validateLogin = [
 
   router.get('/spots', requireAuth, async (req, res) => {
     try{
-      const currentUserSpots = Spot.findAll()
-      res.json(currentUserSpots)
+      const currentUserSpots = await Spot.findAll(
+        {
+        where: { ownerId: req.user.id},
+        include: [
+        {
+            model: SpotImage,
+            attributes: ['url', 'preview'], 
+        },
+        {
+            model: Review,
+            attributes: ['stars'],  
+        },
+    ],
+  },
+);
+
+const currentUserSpotsWithPreviewAndRating = currentUserSpots.map((spot) => {
+    const previewImage = spot.SpotImages.find(image => image.preview === true);
+
+    if (previewImage) {
+        spot.dataValues.previewImage = previewImage.url;  
+    } else {
+        spot.dataValues.previewImage = null;  
+    }
+
+    delete spot.dataValues.SpotImages;
+
+    if (spot.Reviews && spot.Reviews.length > 0) {
+        const totalRating = spot.Reviews.reduce((sum, review) => sum + review.stars, 0);
+        const avgRating = totalRating / spot.Reviews.length;
+        spot.dataValues.avgRating = avgRating;
+    } else {
+        spot.dataValues.avgRating = 0;  
+    }
+
+    delete spot.dataValues.Reviews;
+
+    return spot;
+});
+
+      res.json({Spots: currentUserSpots})
     }
     catch(error){
       console.error(error)

@@ -17,13 +17,28 @@ module.exports = {
       preview: true,
     },
     {
+      spotId: 1,
+      url: "https://spotimage11.com",
+      preview: false,
+    },
+    {
       spotId: 2,
       url: "https://spotimage2.com",
       preview: true,
     },
     {
+    spotId: 2,
+      url: "https://spotimage22.com",
+      preview: false,
+    },
+    {
       spotId: 3,
       url: "https://spotimage3.com",
+      preview: true,
+    },
+    {
+      spotId: 3,
+      url: "https://spotimage33.com",
       preview: false,
     },
   
