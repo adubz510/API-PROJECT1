@@ -98,7 +98,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         isName(value){
-          if(value.length > 50 || value.length < 0){
+          if(value.length > 50){
             throw new Error('Name must be less than 50 characters')
           }
       },
