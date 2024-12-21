@@ -42,7 +42,21 @@ const validateLogin = [
   },
 );
 
-const currentUserSpotsWithPreviewAndRating = currentUserSpots.map((spot) => {
+const currentUserSpotsAvgRating = currentUserSpots.map((spot) => {
+  if (spot.Reviews && spot.Reviews.length > 0) {
+      const totalRating = spot.Reviews.reduce((acc, review) => acc + review.stars, 0);
+      const avgRating = totalRating / spot.Reviews.length;
+      spot.dataValues.avgRating = avgRating;
+  } else {
+      spot.dataValues.avgRating = 0;  
+  }
+
+  delete spot.dataValues.Reviews;
+
+  return spot;
+});
+
+const currentUserSpotsPreview = currentUserSpots.map((spot) => {
     const previewImage = spot.SpotImages.find(image => image.preview === true);
 
     if (previewImage) {
@@ -52,19 +66,8 @@ const currentUserSpotsWithPreviewAndRating = currentUserSpots.map((spot) => {
     }
 
     delete spot.dataValues.SpotImages;
-
-    if (spot.Reviews && spot.Reviews.length > 0) {
-        const totalRating = spot.Reviews.reduce((sum, review) => sum + review.stars, 0);
-        const avgRating = totalRating / spot.Reviews.length;
-        spot.dataValues.avgRating = avgRating;
-    } else {
-        spot.dataValues.avgRating = 0;  
-    }
-
-    delete spot.dataValues.Reviews;
-
     return spot;
-});
+  })
 
       res.json({Spots: currentUserSpots})
     }
