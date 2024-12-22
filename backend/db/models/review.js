@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Review.belongsTo(
         models.User, {
-          as: 'Owner',
+          // as: 'Owner',
           foreignKey: 'userId',
         }
       )

@@ -10,7 +10,7 @@ const { handleValidationErrors } = require('../../utils/validation');
 
 const router = express.Router();
 
-
+//create new spotImage by id
 router.post('/:spotId/spotImages', requireAuth, async(req, res) => {
     const { spotId } = req.params;
     const { url, preview } = req.body;
@@ -40,6 +40,8 @@ router.post('/:spotId/spotImages', requireAuth, async(req, res) => {
     };
 });
 
+
+//get details of spot by id
 router.get('/:spotId', async (req, res) => {
     try{
         const { spotId } = req.params
@@ -84,6 +86,8 @@ router.get('/:spotId', async (req, res) => {
     }
 });
 
+
+//edit a spot
 router.put('/:spotId', requireAuth, async(req, res) => {
     const { spotId } = req.params;
     const { address, city, state, country, lat, lng, name, description, price } = req.body
@@ -130,6 +134,8 @@ router.put('/:spotId', requireAuth, async(req, res) => {
     }
 })
 
+
+//create a new spot
 router.post('/', requireAuth, async (req, res, next) => {
     const { address, city, state, country, lat, lng, name, description, price } = req.body
 
@@ -166,6 +172,8 @@ router.post('/', requireAuth, async (req, res, next) => {
 
 })
 
+
+//get all spots
 router.get('/', async (req, res) => {
     try {
         const allSpots = await Spot.findAll({
@@ -230,6 +238,7 @@ router.get('/', async (req, res) => {
 }
 )
 
+//delete spot
 router.delete('/:spotId', requireAuth, async(req, res) => {
     const { spotId } = req.params;
     

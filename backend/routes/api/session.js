@@ -24,8 +24,10 @@ const validateLogin = [
     handleValidationErrors
   ];
 
+  //get all spots owned by current user
   router.get('/spots', requireAuth, async (req, res) => {
     try{
+      
       const currentUserSpots = await Spot.findAll(
         {
         where: { ownerId: req.user.id},
@@ -42,7 +44,7 @@ const validateLogin = [
   },
 );
 
-const currentUserSpotsAvgRating = currentUserSpots.map((spot) => {
+const currentUserSpotsAvgRating = spot.map((spot) => {
   if (spot.Reviews && spot.Reviews.length > 0) {
       const totalRating = spot.Reviews.reduce((acc, review) => acc + review.stars, 0);
       const avgRating = totalRating / spot.Reviews.length;
@@ -76,6 +78,88 @@ const currentUserSpotsPreview = currentUserSpots.map((spot) => {
     }
   })
 
+  //get all reviews of current user
+  router.get('/reviews', requireAuth, async(req, res) => {
+    try{
+      const currentUserReviews = await Review.findAll(
+        {
+          where: {userId: req.user.id},
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'firstName', 'lastName']
+          },
+          {
+            model: ReviewImage,
+            attributes: ['id', 'url']  
+        },
+            {
+              model: Spot,
+              attributes: [
+                'id', 
+                'ownerId', 
+                'address', 
+                'city', 
+                'state', 
+                'country', 
+                'lat', 
+                'lng', 
+                'name', 
+                'price',
+            ],
+            include: [
+              {
+                model: SpotImage,
+                attributes: ['url', 'preview'] 
+            },
+            ]
+             },
+
+          ]
+        })
+        const processedReviews = currentUserReviews.map((review) => {
+          const spot = review.Spot;
+          const previewImage = spot.SpotImages.find(image => image.preview === true);
+
+          if (previewImage) {
+              spot.dataValues.previewImage = previewImage.url;  
+          } else {
+              spot.dataValues.previewImage = null; 
+          }
+
+          delete spot.dataValues.SpotImages; 
+
+          return review;
+        })   
+    
+      res.json({Reviews: processedReviews})
+    }
+    catch(error){
+      console.error(error)
+    }
+  })
+  // const currentUserSpotsPreview = currentUserReviews.forEach((review) => {
+  //   console.log(review)
+  //   const spot = Spot.findAll({
+  //     where: {ownerId: req.user.id},
+  //     include: [
+  //       {
+  //         model: SpotImage,
+  //         attributes: ['id', 'url', 'preview'],
+  //       }
+  //     ]
+  //   })
+  //   const previewImage = spot.SpotImages.find(image => image.preview === true);
+
+  //   if (previewImage) {
+  //       review.dataValues.previewImage = previewImage.url;  
+  //   } else {
+  //       spot.dataValues.previewImage = null;  
+  //   }
+
+  //   delete spot.dataValues.SpotImages;
+  //   return spot;
+  // })
 
   // Restore session user
   router.get(
@@ -119,6 +203,11 @@ router.post(
         err.title = 'Login failed';
         err.errors = { credential: 'The provided credentials were invalid.' };
         return next(err);
+        // const err = new Error('Invalid credentials');
+        // err.status = 401;
+        // err.title = 'Invalid credentials';
+        // err.errors = { credential: 'The provided credentials were invalid.' };
+        // return next(err);
       }
   
       const safeUser = {
