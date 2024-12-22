@@ -138,28 +138,6 @@ const currentUserSpotsPreview = currentUserSpots.map((spot) => {
       console.error(error)
     }
   })
-  // const currentUserSpotsPreview = currentUserReviews.forEach((review) => {
-  //   console.log(review)
-  //   const spot = Spot.findAll({
-  //     where: {ownerId: req.user.id},
-  //     include: [
-  //       {
-  //         model: SpotImage,
-  //         attributes: ['id', 'url', 'preview'],
-  //       }
-  //     ]
-  //   })
-  //   const previewImage = spot.SpotImages.find(image => image.preview === true);
-
-  //   if (previewImage) {
-  //       review.dataValues.previewImage = previewImage.url;  
-  //   } else {
-  //       spot.dataValues.previewImage = null;  
-  //   }
-
-  //   delete spot.dataValues.SpotImages;
-  //   return spot;
-  // })
 
   // Restore session user
   router.get(

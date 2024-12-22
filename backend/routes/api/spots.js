@@ -10,6 +10,47 @@ const { handleValidationErrors } = require('../../utils/validation');
 
 const router = express.Router();
 
+
+//get all reviews by spot's id
+router.get('/:spotId/reviews', async (req, res) => {
+    const { spotId } = req.params;
+    try{
+    
+    const allReviewsBySpotId = await Spot.findByPk(spotId, {
+        attributes: [],
+        include: [
+            {
+                model: Review,
+                include: [
+                    {
+                        model: ReviewImage,
+                        attributes: ['id', 'url']
+                    },
+                    {
+                        model: User,
+                        attributes: ['id', 'firstName', 'lastName']
+                    },
+                ]
+            },
+        ]
+    })
+
+    res.json(allReviewsBySpotId)
+}
+catch(error){
+    return res.status(404).json({ message: "Spot not found" });
+}
+})
+
+router.post('/:spotId/reviews', requireAuth, async(req, res) => {
+    const { spotId } = req.params;
+    const { review, stars } = req.body 
+    try {
+
+    }
+
+})
+
 //create new spotImage by id
 router.post('/:spotId/spotImages', requireAuth, async(req, res) => {
     const { spotId } = req.params;
