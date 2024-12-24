@@ -314,7 +314,7 @@ router.get('/', async (req, res) => {
 )
 
 //delete spot
-router.delete('/:spotId', requireAuth, async(req, res) => {
+router.delete('/:spotId', requireAuth, async(req, res, next) => {
     const { spotId } = req.params;
     
     try {
@@ -325,6 +325,12 @@ router.delete('/:spotId', requireAuth, async(req, res) => {
                 message: "Spot couldn't be found"
             });
         }
+
+        if (spot.ownerId !== req.user.id) {
+            return res.status(403).json({
+                message: "Require proper authorization: Spot must belong to the current user"
+            });
+        }
         
             spot.destroy();
             return res.json({
@@ -332,7 +338,7 @@ router.delete('/:spotId', requireAuth, async(req, res) => {
             });
     }
     catch(error) {
-        return res.status(404).json({message: "Spot couldn't be found"});
+        next(error);
     }
 })
 

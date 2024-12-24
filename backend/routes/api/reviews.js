@@ -81,6 +81,36 @@ catch(error) {
     "stars": "Stars must be an integer from 1 to 5",
   }})
 }
+});
+
+
+//Delete a review by reviewId
+router.delete('/:reviewId', requireAuth, async(req, res, next) => {
+    const { reviewId } = req.params;
+
+    try {
+        const review = await Review.findByPk(reviewId);
+
+        if (!review) {
+            return res.status(404).json({
+                message: "Review couldn't be found"
+            });
+        };
+
+        if (review.userId !== req.user.id) {
+            return res.status(403).json({
+                message: "Require proper authorization: Spot must belong to the current user"
+            });
+        }
+
+        review.destroy();
+        return res.json({
+            message: "Successfully deleted"
+        })
+    }
+catch(error){
+    next(error)
+}
 })
 
 
