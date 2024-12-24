@@ -42,6 +42,7 @@ catch(error){
 }
 })
 
+//create new review by spotId
 router.post('/:spotId/reviews', requireAuth, async(req, res, next) => {
     const { spotId } = req.params;
     const { review, stars } = req.body;
