@@ -11,6 +11,45 @@ const { handleValidationErrors } = require('../../utils/validation');
 const router = express.Router();
 
 
+//get all bookings for a spot by spot id
+router.get('/:spotId/bookings', requireAuth, async(req, res, next) => {
+    const { spotId } = req.params;
+    try{
+        const spot = await Spot.findByPk(spotId)
+
+        if(!spot) {
+            return res.status(404).json({
+                message: "Spot couldn't be found"
+            })
+        }
+
+        if (spot.ownerId !== req.user.id) {
+            return res.status(403).json({
+                message: "Require proper authorization: Spot must belong to the current user"
+            });
+        }
+        
+        const allBookingsBySpotId = await Spot.findByPk(spotId, {
+            attributes: [],
+            include: [
+                {
+                    model: Booking,
+                    attributes: ['id', 'spotId', 'userId', 'startDate', 'endDate', 'createdAt', 'updatedAt'],
+                    include: [{
+                        model: User,
+                        attributes: ['id', 'firstName', 'lastName']
+                    }]
+                }
+            ]
+        })
+
+        res.json(allBookingsBySpotId)
+    }
+    catch(error){
+        next(error)
+    }
+})
+
 //get all reviews by spot's id
 router.get('/:spotId/reviews', async (req, res) => {
     const { spotId } = req.params;

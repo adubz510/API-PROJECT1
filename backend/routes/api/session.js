@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, restoreUser, requireAuth } = require('../../utils/auth');
 const { Spot, User, Review, Booking, SpotImage, ReviewImage } = require('../../db/models');
-const { spotsWithPreviewAndRating } = require('./spots.js')
 
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
@@ -23,6 +22,55 @@ const validateLogin = [
       .withMessage('Please provide a password.'),
     handleValidationErrors
   ];
+
+//   if (spot.ownerId !== req.user.id) {
+//     return res.status(403).json({
+//         message: "Require proper authorization: Spot must belong to the current user"
+//     });
+// }
+
+  //get all current user's bookings
+  router.get('/bookings', requireAuth, async(req, res, next) => {
+    try{
+      const currentUserBooking = await Booking.findAll({
+        where: { userId: req.user.id },
+        include: [
+          {
+            model: Spot,
+            attributes: ['ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price', ],
+            include: [
+              {
+                  model: SpotImage,
+                  attributes: ['url', 'preview'], 
+                  where: {preview: true},
+                  required: false,
+              },
+            ],
+          }
+        ]
+      })
+
+      const currentUserSpotsPreview = currentUserBooking.map((booking) => {
+        const spot = booking.Spot;
+        
+        let previewImage = null
+        if (spot.SpotImages && spot.SpotImages.length > 0) {
+            previewImage = spot.SpotImages[0].url;
+            }
+
+            spot.dataValues.previewImage = previewImage;
+
+            delete spot.dataValues.SpotImages;
+
+        return booking;
+      })
+
+      res.json({Bookings: currentUserBooking })
+    }
+    catch(error){
+      next(error)
+    }
+  })
 
   //get all spots owned by current user
   router.get('/spots', requireAuth, async (req, res) => {
