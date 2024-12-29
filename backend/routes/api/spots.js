@@ -1,6 +1,7 @@
 // backend/routes/api/spots.js
 const express = require('express')
 const bcrypt = require('bcryptjs');
+const { Op } = require('sequelize');
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
 const { Spot, User, Review, Booking, SpotImage, ReviewImage } = require('../../db/models');
@@ -10,6 +11,84 @@ const { handleValidationErrors } = require('../../utils/validation');
 
 const router = express.Router();
 
+//create a booking from spot based on spot id
+router.post('/:spotId/bookings', requireAuth, async(req, res, next) => {
+    const { spotId } = req.params;
+    const {startDate, endDate} = req.body;
+    try{
+        const spot = await Spot.findByPk(spotId);
+
+        if(!spot) {
+            return res.status(404).json({ message: "Spot not found" });
+        }
+        if (spot.ownerId === req.user.id) {
+            return res.status(403).json({
+                message: "Spot must NOT belong to the current user"
+            });
+        }
+        const today = new Date();
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+    
+        if (start < today) {
+          return res.status(400).json({
+            message: "startDate cannot be in the past"
+          });
+        }
+    
+        if (end <= start) {
+          return res.status(400).json({
+            message: "endDate cannot be on or before startDate"
+          });
+        }
+    
+        const existingBookings = await Booking.findAll({
+            where: {
+              spotId,
+              [Op.or]: [
+                {
+                  startDate: {
+                    [Op.between]: [startDate, endDate], 
+                  },
+                },
+                {
+                  endDate: {
+                    [Op.between]: [startDate, endDate],  
+                  },
+                },
+                {
+                  [Op.and]: [
+                    { startDate: { [Op.lte]: startDate } }, 
+                    { endDate: { [Op.gte]: endDate } },     
+                  ],
+                },
+              ],
+            },
+          });
+
+          if(existingBookings.length > 0) {
+            return res.status(403).json({
+                message: "Sorry, this spot is already booked for the specified dates",
+                errors: {
+                    startDate: "Start date conflicts with an existing booking",
+                    endDate: "End date conflicts with an existing booking"
+                }
+            })
+          }
+
+        const createBookingBySpotId = await Booking.create({
+            spotId: spot.id,
+            userId: req.user.id,
+            startDate,
+            endDate,
+        })
+
+        res.json(createBookingBySpotId)
+    }
+    catch(error){
+       next(error)
+    }
+})
 
 //get all bookings for a spot by spot id
 router.get('/:spotId/bookings', requireAuth, async(req, res, next) => {
@@ -28,7 +107,7 @@ router.get('/:spotId/bookings', requireAuth, async(req, res, next) => {
                 message: "Require proper authorization: Spot must belong to the current user"
             });
         }
-        
+
         const allBookingsBySpotId = await Spot.findByPk(spotId, {
             attributes: [],
             include: [

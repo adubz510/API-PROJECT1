@@ -23,12 +23,6 @@ const validateLogin = [
     handleValidationErrors
   ];
 
-//   if (spot.ownerId !== req.user.id) {
-//     return res.status(403).json({
-//         message: "Require proper authorization: Spot must belong to the current user"
-//     });
-// }
-
   //get all current user's bookings
   router.get('/bookings', requireAuth, async(req, res, next) => {
     try{
@@ -52,6 +46,12 @@ const validateLogin = [
 
       const currentUserSpotsPreview = currentUserBooking.map((booking) => {
         const spot = booking.Spot;
+
+          if (spot.ownerId !== req.user.id) {
+    return res.status(403).json({
+        message: "Require proper authorization: Spot must belong to the current user"
+    });
+}
         
         let previewImage = null
         if (spot.SpotImages && spot.SpotImages.length > 0) {
@@ -92,7 +92,9 @@ const validateLogin = [
   },
 );
 
-const currentUserSpotsAvgRating = spot.map((spot) => {
+
+
+const currentUserSpotsAvgRating = currentUserSpots.map((spot) => {
   if (spot.Reviews && spot.Reviews.length > 0) {
       const totalRating = spot.Reviews.reduce((acc, review) => acc + review.stars, 0);
       const avgRating = totalRating / spot.Reviews.length;
