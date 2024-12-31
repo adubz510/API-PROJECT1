@@ -63,7 +63,7 @@ router.put('/:reviewId', requireAuth, async(req, res) => {
 
     if (existingReview.userId !== req.user.id) {
         return res.status(403).json({
-            message: "Require proper authorization: Spot must belong to the current user"
+            message: "Require proper authorization: Review must belong to the current user"
         });
     }
 

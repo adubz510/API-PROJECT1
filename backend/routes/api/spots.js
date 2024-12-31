@@ -43,37 +43,28 @@ router.post('/:spotId/bookings', requireAuth, async(req, res, next) => {
         }
     
         const existingBookings = await Booking.findAll({
-            where: {
-              spotId,
-              [Op.or]: [
-                {
-                  startDate: {
-                    [Op.between]: [startDate, endDate], 
-                  },
-                },
-                {
-                  endDate: {
-                    [Op.between]: [startDate, endDate],  
-                  },
-                },
-                {
-                  [Op.and]: [
-                    { startDate: { [Op.lte]: startDate } }, 
-                    { endDate: { [Op.gte]: endDate } },     
-                  ],
-                },
-              ],
-            },
+            where: { spotId }
           });
-
-          if(existingBookings.length > 0) {
+          
+          const overlappingBookings = existingBookings.filter(booking => {
+            const bookingStart = new Date(booking.startDate);
+            const bookingEnd = new Date(booking.endDate);
+          
+            const isStartInRange = start >= bookingStart && start < bookingEnd;  // Check if the requested start date is within an existing booking's range
+            const isEndInRange = end > bookingStart && end <= bookingEnd;        // Check if the requested end date is within an existing booking's range
+            const isFullyContained = start <= bookingStart && end >= bookingEnd;  // Check if the requested booking fully contains the existing booking
+          
+            return isStartInRange || isEndInRange || isFullyContained;
+          });
+        
+          if (overlappingBookings.length > 0) {
             return res.status(403).json({
-                message: "Sorry, this spot is already booked for the specified dates",
-                errors: {
-                    startDate: "Start date conflicts with an existing booking",
-                    endDate: "End date conflicts with an existing booking"
-                }
-            })
+              message: "Sorry, this spot is already booked for the specified dates",
+              errors: {
+                startDate: "Start date conflicts with an existing booking",
+                endDate: "End date conflicts with an existing booking"
+              },
+            });
           }
 
         const createBookingBySpotId = await Booking.create({
