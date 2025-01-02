@@ -88,6 +88,44 @@ catch(error){
 }
 })
 
+// delete an existing booking
+router.delete('/:bookingId', requireAuth, async(req, res) => {
+    const { bookingId } = req.params;
+
+    try{
+        const existingBooking = await Booking.findByPk(bookingId);
+
+        if (!existingBooking) {
+            return res.status(404).json({
+                message: "Booking couldn't be found"
+            })
+        }
+        
+        if(existingBooking.userId !== req.user.id){
+            return res.status(403).json({
+                message: "Require proper authorization: Booking must belong to the current user"
+            });
+        }
+
+        const today = new Date();
+        const start = new Date(existingBooking.startDate);
+        
+        if(start < today){
+            return res.status(403).json({
+                message: "Bookings that have been started can't be deleted"
+            })
+        }
+
+        existingBooking.destroy();
+        res.json({
+            message: "Successfully deleted"
+        })
+
+    }
+    catch(error){
+        next(error)
+    }
+})
 
 
 module.exports = router;
