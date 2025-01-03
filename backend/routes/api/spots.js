@@ -358,9 +358,109 @@ router.post('/', requireAuth, async (req, res, next) => {
 
 
 //get all spots
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
+    let {page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice} = req.query;
+
     try {
+        page = page ? parseInt(page) : 1;
+        size = size ? parseInt(size) : 20;
+
+            if (page < 1) {
+            return res.status(400).json({
+                page: "Page must be greater than or equal to 1"
+            })
+        } ;
+            if (size < 1 || size > 20) {
+            return res.status(400).json({
+                size: "Size must be between 1 and 20"
+            })
+        };
+        const pagination = {
+            limit: size,
+            offset: (page - 1) * size
+        };
+
+        const filters = {};
+
+        if(maxLat !== undefined) {
+            maxLat = parseFloat(maxLat);
+            if(maxLat > 90){
+            return res.status(400).json({
+                maxLat: "Maximum latitude is invalid",
+            })
+        } else {
+            filters.maxLat = maxLat
+        } 
+    } else {
+        filters.maxLat = 90;
+    }
+        if(minLat !== undefined) {
+            minLat = parseFloat(minLat);
+            if(minLat < -90){
+            return res.status(400).json({
+                minLat: "Minimum latitude is invalid"
+            })
+        } else {
+            filters.minLat = minLat
+        }
+    } else {
+       filters.minLat = -90
+    }
+    if(minLng !== undefined) {
+        minLng = parseFloat(minLng)
+        if(minLng < -180) {
+            return res.status(400).json({
+                minLng: "Minimum longitude is invalid",
+            })
+        } else {
+            filters.minLng = minLng
+        }
+    } else {
+        filters.minLng = -180
+    }
+        if(maxLng !== undefined) {
+            maxLng = parseFloat(maxLng)
+            if(maxLng > 180) {
+                return res.status(400).json({
+                    maxLng: "Maximum longitude is invalid"
+                })
+            } else {
+                filters.maxLng = maxLng
+            }
+        } else {
+            filters.maxLng = 180;
+        }
+        if(minPrice !== undefined) {
+            minPrice = parseFloat(minPrice)
+            if(minPrice < 0) {
+            return res.status(400).json({
+                minPrice: "Minimum price must be greater than or equal to 0",
+            })
+        } else {
+            filters.minPrice = minPrice
+        }
+    } else {
+        filters.minPrice = 0;
+    }
+        if(maxPrice !== undefined) {
+            maxPrice = parseFloat(maxPrice)
+            if(maxPrice < 0) {
+            return res.status(400).json({
+                maxPrice: "Maximum price must be greater than or equal to 0"
+            })
+        } else {
+            filters.maxPrice = maxPrice
+        }
+    } else {
+        filters.maxPrice = 1000000;
+    }
+
         const allSpots = await Spot.findAll({
+            where: {
+                lat: {[Op.between]: [filters.minLat, filters.maxLat]},
+                lng: {[Op.between]: [filters.minLng, filters.maxLng]},
+                price: {[Op.between]: [filters.minPrice, filters.maxPrice]},
+            },
             include: [
                 {
                     model: SpotImage,
@@ -371,6 +471,8 @@ router.get('/', async (req, res) => {
                     attributes: ['stars'],  
                 },
             ],
+            limit: pagination.limit,
+            offset: pagination.offset,
         });
 
             const spotsAvgRating = allSpots.map((spot) => {
@@ -403,21 +505,13 @@ router.get('/', async (req, res) => {
             return spot;
         });
 
-        res.json({Spots: allSpots})
+        res.json({Spots: allSpots,
+            page: page,
+            size: size,
+        })
     }
     catch(error){
-        return res.status(400).json({ message: "Bad Request",
-            "errors": {
-              "address": "Street address is required",
-              "city": "City is required",
-              "state": "State is required",
-              "country": "Country is required",
-              "lat": "Latitude must be within -90 and 90",
-              "lng": "Longitude must be within -180 and 180",
-              "name": "Name must be less than 50 characters",
-              "description": "Description is required",
-              "price": "Price per day must be a positive number"
-            }});  
+        next(error) 
     }
 }
 )
