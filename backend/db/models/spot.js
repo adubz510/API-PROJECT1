@@ -11,6 +11,33 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Spot.belongsTo(
+        models.User, {
+          as: 'Owner',
+          foreignKey: 'ownerId',
+        }
+      )
+      Spot.hasMany(
+        models.SpotImage, {
+          foreignKey: 'spotId',
+          onDelete: 'CASCADE',
+          hooks: true
+        }
+      )
+      Spot.hasMany(
+        models.Booking, {
+          foreignKey: 'spotId',
+          onDelete: 'CASCADE',
+          hooks: true,
+        }
+      )
+      Spot.hasMany(
+        models.Review, {
+          foreignKey: 'spotId',
+          onDelete: 'CASCADE',
+          hooks: true,
+        }
+      )
     }
   }
   Spot.init({
@@ -45,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     lat: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL,
       allowNull: false,
       validate: {
         isLat(value){
@@ -56,7 +83,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     lng: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL,
       allowNull: false,
       validate: {
         isLng(value){
@@ -71,7 +98,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       validate: {
         isName(value){
-          if(value.length > 50 || value.length < 0){
+          if(value.length > 50){
             throw new Error('Name must be less than 50 characters')
           }
       },
@@ -85,7 +112,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     price: {
-      type: DataTypes.FLOAT,
+      type: DataTypes.DECIMAL,
       allowNull: false,
       validate: {
         isPrice(value){
