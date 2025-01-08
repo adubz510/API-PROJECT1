@@ -44,7 +44,7 @@ const validateLogin = [
         ]
       })
 
-      const currentUserSpotsPreview = currentUserBooking.map((booking) => {
+     currentUserBooking.map((booking) => {
         const spot = booking.Spot;
 
           if (spot.ownerId !== req.user.id) {
@@ -92,9 +92,7 @@ const validateLogin = [
   },
 );
 
-
-
-const currentUserSpotsAvgRating = currentUserSpots.map((spot) => {
+currentUserSpots.map((spot) => {
   if (spot.Reviews && spot.Reviews.length > 0) {
       const totalRating = spot.Reviews.reduce((acc, review) => acc + review.stars, 0);
       const avgRating = totalRating / spot.Reviews.length;
@@ -108,7 +106,7 @@ const currentUserSpotsAvgRating = currentUserSpots.map((spot) => {
   return spot;
 });
 
-const currentUserSpotsPreview = currentUserSpots.map((spot) => {
+currentUserSpots.map((spot) => {
     const previewImage = spot.SpotImages.find(image => image.preview === true);
 
     if (previewImage) {
