@@ -1,4 +1,4 @@
-// backend/routes/api/spotImages.js
+// backend/routes/api/spot-images.js
 const express = require('express')
 const bcrypt = require('bcryptjs');
 

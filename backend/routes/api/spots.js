@@ -195,7 +195,7 @@ router.post('/:spotId/reviews', requireAuth, async(req, res, next) => {
 })
 
 //create new spotImage by id
-router.post('/:spotId/spotImages', requireAuth, async(req, res) => {
+router.post('/:spotId/images', requireAuth, async(req, res) => {
     const { spotId } = req.params;
     const { url, preview } = req.body;
     try {
