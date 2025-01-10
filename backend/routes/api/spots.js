@@ -355,7 +355,7 @@ router.post('/', requireAuth, async (req, res, next) => {
 })
 
 //get all spots owned by current user
-router.get('/current', requireAuth, async (req, res, next) => {
+router.get('/current', requireAuth, async (req, res) => {
     try{
       
       const currentUserSpots = await Spot.findAll(
@@ -382,7 +382,7 @@ currentUserSpots.map((spot) => {
   } else {
       spot.dataValues.avgRating = 0;  
   }
-
+  console.log(spot)
   delete spot.dataValues.Reviews;
 
   return spot;
@@ -398,13 +398,14 @@ currentUserSpots.map((spot) => {
     }
 
     delete spot.dataValues.SpotImages;
+    console.log("spotimages:" + spot)
     return spot;
   })
 
       res.json({Spots: currentUserSpots})
     }
     catch(error){
-      next(error)
+      console.error(error)
     }
   })
 
