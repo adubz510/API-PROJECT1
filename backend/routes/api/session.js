@@ -72,59 +72,59 @@ const validateLogin = [
     }
   })
 
-  //get all spots owned by current user
-  router.get('/spots', requireAuth, async (req, res) => {
-    try{
+//   //get all spots owned by current user
+//   router.get('/spots', requireAuth, async (req, res) => {
+//     try{
       
-      const currentUserSpots = await Spot.findAll(
-        {
-        where: { ownerId: req.user.id},
-        include: [
-        {
-            model: SpotImage,
-            attributes: ['url', 'preview'], 
-        },
-        {
-            model: Review,
-            attributes: ['stars'],  
-        },
-    ],
-  },
-);
+//       const currentUserSpots = await Spot.findAll(
+//         {
+//         where: { ownerId: req.user.id},
+//         include: [
+//         {
+//             model: SpotImage,
+//             attributes: ['url', 'preview'], 
+//         },
+//         {
+//             model: Review,
+//             attributes: ['stars'],  
+//         },
+//     ],
+//   },
+// );
 
-currentUserSpots.map((spot) => {
-  if (spot.Reviews && spot.Reviews.length > 0) {
-      const totalRating = spot.Reviews.reduce((acc, review) => acc + review.stars, 0);
-      const avgRating = totalRating / spot.Reviews.length;
-      spot.dataValues.avgRating = avgRating;
-  } else {
-      spot.dataValues.avgRating = 0;  
-  }
+// currentUserSpots.map((spot) => {
+//   if (spot.Reviews && spot.Reviews.length > 0) {
+//       const totalRating = spot.Reviews.reduce((acc, review) => acc + review.stars, 0);
+//       const avgRating = totalRating / spot.Reviews.length;
+//       spot.dataValues.avgRating = avgRating;
+//   } else {
+//       spot.dataValues.avgRating = 0;  
+//   }
 
-  delete spot.dataValues.Reviews;
+//   delete spot.dataValues.Reviews;
 
-  return spot;
-});
+//   return spot;
+// });
 
-currentUserSpots.map((spot) => {
-    const previewImage = spot.SpotImages.find(image => image.preview === true);
+// currentUserSpots.map((spot) => {
+//     const previewImage = spot.SpotImages.find(image => image.preview === true);
 
-    if (previewImage) {
-        spot.dataValues.previewImage = previewImage.url;  
-    } else {
-        spot.dataValues.previewImage = null;  
-    }
+//     if (previewImage) {
+//         spot.dataValues.previewImage = previewImage.url;  
+//     } else {
+//         spot.dataValues.previewImage = null;  
+//     }
 
-    delete spot.dataValues.SpotImages;
-    return spot;
-  })
+//     delete spot.dataValues.SpotImages;
+//     return spot;
+//   })
 
-      res.json({Spots: currentUserSpots})
-    }
-    catch(error){
-      console.error(error)
-    }
-  })
+//       res.json({Spots: currentUserSpots})
+//     }
+//     catch(error){
+//       console.error(error)
+//     }
+//   })
 
   //get all reviews of current user
   router.get('/reviews', requireAuth, async(req, res) => {

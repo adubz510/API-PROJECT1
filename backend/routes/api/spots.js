@@ -356,6 +356,59 @@ router.post('/', requireAuth, async (req, res, next) => {
 
 })
 
+//get all spots owned by current user
+router.get('/current', requireAuth, async (req, res, next) => {
+    try{
+      
+      const currentUserSpots = await Spot.findAll(
+        {
+        where: { ownerId: req.user.id},
+        include: [
+        {
+            model: SpotImage,
+            attributes: ['url', 'preview'], 
+        },
+        {
+            model: Review,
+            attributes: ['stars'],  
+        },
+    ],
+  },
+);
+
+currentUserSpots.map((spot) => {
+  if (spot.Reviews && spot.Reviews.length > 0) {
+      const totalRating = spot.Reviews.reduce((acc, review) => acc + review.stars, 0);
+      const avgRating = totalRating / spot.Reviews.length;
+      spot.dataValues.avgRating = avgRating;
+  } else {
+      spot.dataValues.avgRating = 0;  
+  }
+
+  delete spot.dataValues.Reviews;
+
+  return spot;
+});
+
+currentUserSpots.map((spot) => {
+    const previewImage = spot.SpotImages.find(image => image.preview === true);
+
+    if (previewImage) {
+        spot.dataValues.previewImage = previewImage.url;  
+    } else {
+        spot.dataValues.previewImage = null;  
+    }
+
+    delete spot.dataValues.SpotImages;
+    return spot;
+  })
+
+      res.json({Spots: currentUserSpots})
+    }
+    catch(error){
+      next(error)
+    }
+  })
 
 //get all spots
 router.get('/', async (req, res, next) => {
