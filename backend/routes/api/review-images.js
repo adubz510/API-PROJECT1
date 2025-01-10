@@ -1,4 +1,4 @@
-// backend/routes/api/reviewImages.js
+// backend/routes/api/review-images.js
 const express = require('express')
 const bcrypt = require('bcryptjs');
 
