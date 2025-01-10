@@ -338,7 +338,6 @@ router.post('/', requireAuth, async (req, res, next) => {
         })
         res.json(createNewSpot);
     }
-
     catch(error) {
         return res.status(400).json({ message: "Bad Request",
   "errors": {
@@ -353,7 +352,6 @@ router.post('/', requireAuth, async (req, res, next) => {
     "price": "Price per day must be a positive number"
   }});
     }
-
 })
 
 //get all spots owned by current user
