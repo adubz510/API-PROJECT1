@@ -11,7 +11,7 @@ const { handleValidationErrors } = require('../../utils/validation');
 const router = express.Router();
 
 // create new image review by review Id
-router.post('/:reviewId/reviewImages', requireAuth, async (req, res, next) => {
+router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
     const { reviewId } = req.params;
     const { url } = req.body;
     try{
