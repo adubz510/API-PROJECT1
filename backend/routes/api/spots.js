@@ -1,15 +1,66 @@
 // backend/routes/api/spots.js
 const express = require('express')
-const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
 
-const { setTokenCookie, requireAuth } = require('../../utils/auth');
+const { requireAuth } = require('../../utils/auth');
 const { Spot, User, Review, Booking, SpotImage, ReviewImage } = require('../../db/models');
 
-const { check } = require('express-validator');
-const { handleValidationErrors } = require('../../utils/validation');
-
 const router = express.Router();
+
+//get all spots owned by current user
+router.get('/current', requireAuth, async (req, res) => {
+    try{
+      
+      const currentUserSpots = await Spot.findAll(
+        {
+        where: { ownerId: req.user.id},
+        include: [
+        {
+            model: SpotImage,
+            attributes: ['url', 'preview'], 
+        },
+        {
+            model: Review,
+            attributes: ['stars'],  
+        },
+    ],
+  },
+);
+
+currentUserSpots.map((spot) => {
+  if (spot.Reviews && spot.Reviews.length > 0) {
+      const totalRating = spot.Reviews.reduce((acc, review) => acc + review.stars, 0);
+      const avgRating = totalRating / spot.Reviews.length;
+      spot.dataValues.avgRating = avgRating;
+  } else {
+      spot.dataValues.avgRating = 0;  
+  }
+
+  delete spot.dataValues.Reviews;
+
+  return spot;
+});
+
+currentUserSpots.map((spot) => {
+    const previewImage = spot.SpotImages.find(image => image.preview === true);
+
+    if (previewImage) {
+        spot.dataValues.previewImage = previewImage.url;  
+    } else {
+        spot.dataValues.previewImage = null;  
+    }
+
+    delete spot.dataValues.SpotImages;
+    return spot;
+  })
+
+      res.json({Spots: currentUserSpots})
+    }
+    catch(error){
+      console.error(error)
+    }
+  })
+
 
 //create a booking from spot based on spot id
 router.post('/:spotId/bookings', requireAuth, async(req, res, next) => {
@@ -137,7 +188,10 @@ router.get('/:spotId/reviews', async (req, res) => {
                     },
                     {
                         model: User,
-                        attributes: ['id', 'firstName', 'lastName']
+                        attributes: [
+                            'id', 
+                            'firstName', 
+                            'lastName']
                     },
                 ]
             },
@@ -248,8 +302,7 @@ router.get('/:spotId', async (req, res) => {
             ]
         })
 
-        const spotsAvgRatingAndReviews = Object.values(getDetailsBySpotId).map((spot) => {
-            console.log(spot)
+        Object.values(getDetailsBySpotId).map((spot) => {
             if (spot.Reviews && spot.Reviews.length > 0) {
                 const totalRating = spot.Reviews.reduce((acc, review) => acc + review.stars, 0);
                 const avgRating = totalRating / spot.Reviews.length;
@@ -319,8 +372,10 @@ router.put('/:spotId', requireAuth, async(req, res) => {
 })
 
 
+
+
 //create a new spot
-router.post('/', requireAuth, async (req, res, next) => {
+router.post('/', requireAuth, async (req, res) => {
     const { address, city, state, country, lat, lng, name, description, price } = req.body
 
     try {
@@ -352,65 +407,11 @@ router.post('/', requireAuth, async (req, res, next) => {
     "price": "Price per day must be a positive number"
   }});
     }
-})
-
-//get all spots owned by current user
-router.get('/current', requireAuth, async (req, res) => {
-    try{
-      
-      const currentUserSpots = await Spot.findAll(
-        {
-        where: { ownerId: req.user.id},
-        include: [
-        {
-            model: SpotImage,
-            attributes: ['url', 'preview'], 
-        },
-        {
-            model: Review,
-            attributes: ['stars'],  
-        },
-    ],
-  },
-);
-
-currentUserSpots.map((spot) => {
-  if (spot.Reviews && spot.Reviews.length > 0) {
-      const totalRating = spot.Reviews.reduce((acc, review) => acc + review.stars, 0);
-      const avgRating = totalRating / spot.Reviews.length;
-      spot.dataValues.avgRating = avgRating;
-  } else {
-      spot.dataValues.avgRating = 0;  
-  }
-  console.log(spot)
-  delete spot.dataValues.Reviews;
-
-  return spot;
 });
 
-currentUserSpots.map((spot) => {
-    const previewImage = spot.SpotImages.find(image => image.preview === true);
-
-    if (previewImage) {
-        spot.dataValues.previewImage = previewImage.url;  
-    } else {
-        spot.dataValues.previewImage = null;  
-    }
-
-    delete spot.dataValues.SpotImages;
-    console.log("spotimages:" + spot)
-    return spot;
-  })
-
-      res.json({Spots: currentUserSpots})
-    }
-    catch(error){
-      console.error(error)
-    }
-  })
 
 //get all spots
-router.get('/', async (req, res, next) => {
+router.get('/', async(req, res, next) => {
     let {page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice} = req.query;
 
     try {
@@ -527,7 +528,7 @@ router.get('/', async (req, res, next) => {
             offset: pagination.offset,
         });
 
-            const spotsAvgRating = allSpots.map((spot) => {
+            allSpots.map((spot) => {
 
             if (spot.Reviews.length) {
                 const totalRating = spot.Reviews.reduce((sum, review) => sum + review.stars, 0);
@@ -543,7 +544,7 @@ router.get('/', async (req, res, next) => {
         });
 
 
-        const spotsPreview = allSpots.map((spot) => {
+        allSpots.map((spot) => {
             const previewImage = spot.SpotImages.find(image => image.preview === true);
 
             if (previewImage) {

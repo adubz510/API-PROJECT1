@@ -23,54 +23,54 @@ const validateLogin = [
     handleValidationErrors
   ];
 
-  //get all current user's bookings
-  router.get('/bookings', requireAuth, async(req, res, next) => {
-    try{
-      const currentUserBooking = await Booking.findAll({
-        where: { userId: req.user.id },
-        include: [
-          {
-            model: Spot,
-            attributes: ['ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price', ],
-            include: [
-              {
-                  model: SpotImage,
-                  attributes: ['url', 'preview'], 
-                  where: {preview: true},
-                  required: false,
-              },
-            ],
-          }
-        ]
-      })
+//   //get all current user's bookings
+//   router.get('/bookings', requireAuth, async(req, res, next) => {
+//     try{
+//       const currentUserBooking = await Booking.findAll({
+//         where: { userId: req.user.id },
+//         include: [
+//           {
+//             model: Spot,
+//             attributes: ['ownerId', 'address', 'city', 'state', 'country', 'lat', 'lng', 'name', 'price', ],
+//             include: [
+//               {
+//                   model: SpotImage,
+//                   attributes: ['url', 'preview'], 
+//                   where: {preview: true},
+//                   required: false,
+//               },
+//             ],
+//           }
+//         ]
+//       })
 
-     currentUserBooking.map((booking) => {
-        const spot = booking.Spot;
+//      currentUserBooking.map((booking) => {
+//         const spot = booking.Spot;
 
-          if (spot.ownerId !== req.user.id) {
-    return res.status(403).json({
-        message: "Require proper authorization: Spot must belong to the current user"
-    });
-}
+//           if (spot.ownerId !== req.user.id) {
+//     return res.status(403).json({
+//         message: "Require proper authorization: Spot must belong to the current user"
+//     });
+// }
         
-        let previewImage = null
-        if (spot.SpotImages && spot.SpotImages.length > 0) {
-            previewImage = spot.SpotImages[0].url;
-            }
+//         let previewImage = null
+//         if (spot.SpotImages && spot.SpotImages.length > 0) {
+//             previewImage = spot.SpotImages[0].url;
+//             }
 
-            spot.dataValues.previewImage = previewImage;
+//             spot.dataValues.previewImage = previewImage;
 
-            delete spot.dataValues.SpotImages;
+//             delete spot.dataValues.SpotImages;
 
-        return booking;
-      })
+//         return booking;
+//       })
 
-      res.json({Bookings: currentUserBooking })
-    }
-    catch(error){
-      next(error)
-    }
-  })
+//       res.json({Bookings: currentUserBooking })
+//     }
+//     catch(error){
+//       next(error)
+//     }
+//   })
 
 //   //get all spots owned by current user
 //   router.get('/spots', requireAuth, async (req, res) => {
@@ -126,66 +126,66 @@ const validateLogin = [
 //     }
 //   })
 
-  //get all reviews of current user
-  router.get('/reviews', requireAuth, async(req, res) => {
-    try{
-      const currentUserReviews = await Review.findAll(
-        {
-          where: {userId: req.user.id},
-          include: [
-            {
-              model: User,
-              attributes: ['id', 'firstName', 'lastName']
-          },
-          {
-            model: ReviewImage,
-            attributes: ['id', 'url']  
-        },
-            {
-              model: Spot,
-              attributes: [
-                'id', 
-                'ownerId', 
-                'address', 
-                'city', 
-                'state', 
-                'country', 
-                'lat', 
-                'lng', 
-                'name', 
-                'price',
-            ],
-            include: [
-              {
-                model: SpotImage,
-                attributes: ['url', 'preview'] 
-            },
-            ]
-             },
+  // //get all reviews of current user
+  // router.get('/reviews', requireAuth, async(req, res) => {
+  //   try{
+  //     const currentUserReviews = await Review.findAll(
+  //       {
+  //         where: {userId: req.user.id},
+  //         include: [
+  //           {
+  //             model: User,
+  //             attributes: ['id', 'firstName', 'lastName']
+  //         },
+  //         {
+  //           model: ReviewImage,
+  //           attributes: ['id', 'url']  
+  //       },
+  //           {
+  //             model: Spot,
+  //             attributes: [
+  //               'id', 
+  //               'ownerId', 
+  //               'address', 
+  //               'city', 
+  //               'state', 
+  //               'country', 
+  //               'lat', 
+  //               'lng', 
+  //               'name', 
+  //               'price',
+  //           ],
+  //           include: [
+  //             {
+  //               model: SpotImage,
+  //               attributes: ['url', 'preview'] 
+  //           },
+  //           ]
+  //            },
 
-          ]
-        })
-        const processedReviews = currentUserReviews.map((review) => {
-          const spot = review.Spot;
-          const previewImage = spot.SpotImages.find(image => image.preview === true);
+  //         ]
+  //       })
+  //       const processedReviews = currentUserReviews.map((review) => {
+  //         const spot = review.Spot;
+  //         const previewImage = spot.SpotImages.find(image => image.preview === true);
 
-          if (previewImage) {
-              spot.dataValues.previewImage = previewImage.url;  
-          } else {
-              spot.dataValues.previewImage = null; 
-          }
+  //         if (previewImage) {
+  //             spot.dataValues.previewImage = previewImage.url;  
+  //         } else {
+  //             spot.dataValues.previewImage = null; 
+  //         }
 
-          delete spot.dataValues.SpotImages; 
+  //         delete spot.dataValues.SpotImages; 
 
-          return review;
-        })   
+  //         return review;
+  //       })   
     
-      res.json({Reviews: processedReviews})
-    }
-    catch(error){
-      console.error(error)
-    }
-  })
+  //     res.json({Reviews: processedReviews})
+  //   }
+  //   catch(error){
+  //     console.error(error)
+  //   }
+  // })
 
   // Restore session user
   router.get(

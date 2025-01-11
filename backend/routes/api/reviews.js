@@ -3,12 +3,73 @@ const express = require('express')
 const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, requireAuth } = require('../../utils/auth');
-const { Review, ReviewImage } = require('../../db/models');
+const { User, Spot, Review, ReviewImage, SpotImage } = require('../../db/models');
 
 const { check } = require('express-validator');
 const { handleValidationErrors } = require('../../utils/validation');
 
 const router = express.Router();
+
+  //get all reviews of current user
+  router.get('/current', requireAuth, async(req, res) => {
+    try{
+      const currentUserReviews = await Review.findAll(
+        {
+          where: {userId: req.user.id},
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'firstName', 'lastName']
+          },
+          {
+            model: ReviewImage,
+            attributes: ['id', 'url']  
+        },
+            {
+              model: Spot,
+              attributes: [
+                'id', 
+                'ownerId', 
+                'address', 
+                'city', 
+                'state', 
+                'country', 
+                'lat', 
+                'lng', 
+                'name', 
+                'price',
+            ],
+            include: [
+              {
+                model: SpotImage,
+                attributes: ['url', 'preview'] 
+            },
+            ]
+             },
+
+          ]
+        })
+        const processedReviews = currentUserReviews.map((review) => {
+          const spot = review.Spot;
+          const previewImage = spot.SpotImages.find(image => image.preview === true);
+
+          if (previewImage) {
+              spot.dataValues.previewImage = previewImage.url;  
+          } else {
+              spot.dataValues.previewImage = null; 
+          }
+
+          delete spot.dataValues.SpotImages; 
+
+          return review;
+        })   
+    
+      res.json({Reviews: processedReviews})
+    }
+    catch(error){
+      console.error(error)
+    }
+  })
 
 // create new image review by review Id
 router.post('/:reviewId/images', requireAuth, async (req, res, next) => {
