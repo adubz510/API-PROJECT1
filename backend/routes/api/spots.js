@@ -172,7 +172,7 @@ router.get('/:spotId/bookings', requireAuth, async(req, res, next) => {
 })
 
 //get all reviews by spot's id
-router.get('/:spotId/reviews', async (req, res) => {
+router.get('/:spotId/reviews', async (req, res, next) => {
     const { spotId } = req.params;
     try{
     
@@ -198,10 +198,14 @@ router.get('/:spotId/reviews', async (req, res) => {
         ]
     })
 
+    if(!allReviewsBySpotId) {
+        return res.status(404).json({ message: "Spot not found" })
+    }
+
     res.json(allReviewsBySpotId)
 }
 catch(error){
-    return res.status(404).json({ message: "Spot not found" });
+    next(error)
 }
 })
 
