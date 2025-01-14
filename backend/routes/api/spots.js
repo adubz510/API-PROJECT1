@@ -197,6 +197,9 @@ router.get('/:spotId/reviews', async (req, res, next) => {
             },
         ]
     })
+    if(!allReviewsBySpotId.length) {
+        return res.json({message: "No reviews found for this Spot"})
+    }
 
     if(!allReviewsBySpotId) {
         return res.status(404).json({ message: "Spot not found" })
