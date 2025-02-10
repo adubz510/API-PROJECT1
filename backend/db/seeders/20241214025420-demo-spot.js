@@ -34,7 +34,7 @@ module.exports = {
         lng: -71.8143102535692,
         name: "Rumney Climbing House",
         description: "Where the Garden Man lives",
-        price: 99,
+        price: 99.00,
       },
       {
         ownerId: 1,
@@ -118,7 +118,7 @@ module.exports = {
         lng: -106.31751124547206,
         name: "Windy El Paso house",
         description: "Nice getaway in East El Paso. Closer to the state park and more!",
-        price: 9.00,
+        price: 19.00,
       },
     ], { validate: true });
   },
