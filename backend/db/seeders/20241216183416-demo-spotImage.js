@@ -53,7 +53,7 @@ module.exports = {
     },
     {
       spotId: 5,
-      url: "https://www.kbhome.com/globalassets/images/community-images/nevada/las-vegas/river-mountain-trails/floor-plan/exterior-images-front/kblv_rivermountaintrails_plan1901-frontexterior_7008c_rev-1200.jpg",
+      url: "https://ssl.cdn-redfin.com/photo/95/islphoto/814/genIslnoResize.2651814_0.jpg",
       preview: true,
     },
     {
