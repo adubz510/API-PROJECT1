@@ -56,8 +56,8 @@ module.exports = {
         country: "United States",
         lat: 37.24903906125925,
         lng:  -93.26792742006079,
-        name: "Freddy Kreuger's cousin used to live here",
-        description: "The Nightmare on Elm Street Missouri version. Get a nice spooky and exciting stay!",
+        name: "Murder Mystery House",
+        description: "Get a nice spooky and exciting stay!",
         price: 39.00,
       },
       {
@@ -127,7 +127,7 @@ module.exports = {
     options.tableName = 'Spots';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      name: { [Op.in]: ["College Climbers House", "Rumney Climbing House", "Burlington Sweet Spot", "Freddy Kreuger's cousin used to live here", "Hendy Wendy", "Corner House", "Single White House", "Silver House", "Windy El Paso house"] }
+      name: { [Op.in]: ["College Climbers House", "Rumney Climbing House", "Burlington Sweet Spot", "Murder Mystery House", "Hendy Wendy", "Corner House", "Single White House", "Silver House", "Windy El Paso house"] }
     }, {});
   }
 };
