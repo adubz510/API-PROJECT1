@@ -43,7 +43,7 @@ module.exports = {
     },
     {
       spotId: 4,
-      url: "https://www.bhg.com/thmb/3Vf9GXp3T-adDlU6tKpTbb-AEyE=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/white-modern-house-curved-patio-archway-c0a4a3b3-aa51b24d14d0464ea15d36e05aa85ac9.jpg",
+      url: "https://media.npr.org/assets/img/2022/01/11/30---1428-genesee_047-f6f5275aca0e8d4b4930ffbb56d14d25b5d8ab38.jpg",
       preview: true,
     },
     {
@@ -53,7 +53,7 @@ module.exports = {
     },
     {
       spotId: 5,
-      url: "https://webberstudio.com/wp-content/uploads/2023/02/Stunning-House-Design.jpg",
+      url: "https://www.kbhome.com/globalassets/images/community-images/nevada/las-vegas/river-mountain-trails/floor-plan/exterior-images-front/kblv_rivermountaintrails_plan1901-frontexterior_7008c_rev-1200.jpg",
       preview: true,
     },
     {
@@ -83,7 +83,7 @@ module.exports = {
     },
     {
       spotId: 8,
-      url: "https://www.mightysmallhomes.com/uploads/image5.jpg",
+      url: "https://ap.rdcpix.com/d68a48997e3fc1e11f45a700067fcbfcl-m588357163od-w480_h480_q80.jpg",
       preview: true,
     },
     {
