@@ -13,7 +13,7 @@ module.exports = {
     await SpotImage.bulkCreate([
     {
       spotId: 1,
-      url: "https://www.nps.gov/lacl/planyourvisit/images/LACL-2019-Joe-Thompson-Cabin-Kara-Lewandowski.jpg",
+      url: "https://cdn.landsearch.com/listings/4FZVN/large/guilford-vt-132418800.jpg",
       preview: true,
     },
     {

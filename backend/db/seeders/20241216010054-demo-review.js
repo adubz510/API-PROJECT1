@@ -66,6 +66,114 @@ module.exports = {
         review: "This place is nice! Has everything I would ever want in an Airbnb house! Thank you!",
         stars: 5
       },
+      {
+        userId: 1,
+        spotId: 4,
+        review: "Had an average experience",
+        stars: 3
+      },
+      {
+        userId: 2,
+        spotId: 4,
+        review: "This place was nice! Thank you!",
+        stars: 4
+      },
+      {
+        userId: 3,
+        spotId: 4,
+        review: "This place was okay.",
+        stars: 3
+      },
+      {
+        userId: 1,
+        spotId: 5,
+        review: "This place was okay.",
+        stars: 3
+      },
+      {
+        userId: 2,
+        spotId: 5,
+        review: "This place was okay.",
+        stars: 3
+      },
+      {
+        userId: 3,
+        spotId: 5,
+        review: "This place was okay.",
+        stars: 3
+      },
+      {
+        userId: 1,
+        spotId: 6,
+        review: "This place was okay.",
+        stars: 3
+      },
+      {
+        userId: 2,
+        spotId: 6,
+        review: "This place was okay.",
+        stars: 3
+      },
+      {
+        userId: 3,
+        spotId: 6,
+        review: "This place was okay.",
+        stars: 3
+      },
+      {
+        userId: 1,
+        spotId: 7,
+        review: "This place was okay for the price.",
+        stars: 3
+      },
+      {
+        userId: 2,
+        spotId: 7,
+        review: "This place was okay for the price.",
+        stars: 3
+      },
+      {
+        userId: 3,
+        spotId: 7,
+        review: "Overly expensive.",
+        stars: 2
+      },
+      {
+        userId: 1,
+        spotId: 8,
+        review: "This place was okay.",
+        stars: 3
+      },
+      {
+        userId: 2,
+        spotId: 8,
+        review: "This place was okay.",
+        stars: 4
+      },
+      {
+        userId: 3,
+        spotId: 8,
+        review: "This place was okay.",
+        stars: 2
+      },
+      {
+        userId: 1,
+        spotId: 9,
+        review: "This place was good.",
+        stars: 3
+      },
+      {
+        userId: 2,
+        spotId: 9,
+        review: "This place was nice!",
+        stars: 4
+      },
+      {
+        userId: 3,
+        spotId: 9,
+        review: "Very inexpensive and great place to stay!",
+        stars: 4
+      },
     
     ], { validate: true });
   },
