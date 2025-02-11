@@ -53,7 +53,7 @@ module.exports = {
     },
     {
       spotId: 5,
-      url: "https://ssl.cdn-redfin.com/photo/95/islphoto/814/genIslnoResize.2651814_0.jpg",
+      url: "https://images.homes.com/listings/215/9001393353-473632661/2705-cava-tirreni-st-henderson-nv-primaryphoto.jpg",
       preview: true,
     },
     {
