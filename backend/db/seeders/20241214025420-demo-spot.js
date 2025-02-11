@@ -90,7 +90,7 @@ module.exports = {
         city: "New Paltz",
         state: "New York",
         country: "United States",
-        lat: 141.74856294913664, 
+        lat: 89.74856294913664, 
         lng: -74.0824567838634,
         name: "Single White House",
         description: "Tight little spacious house. Right next to the Burger Box!",
@@ -127,7 +127,7 @@ module.exports = {
     options.tableName = 'Spots';
     const Op = Sequelize.Op;
     return queryInterface.bulkDelete(options, {
-      name: { [Op.in]: ['Muffin Man', 'Freddy Kreuger', 'Shrek'] }
+      name: { [Op.in]: ["College Climbers House", "Rumney Climbing House", "Burlington Sweet Spot", "Freddy Kreuger's cousin used to live here", "Hendy Wendy", "Corner House", "Single White House", "Silver House", "Windy El Paso house"] }
     }, {});
   }
 };
