@@ -53,12 +53,12 @@ module.exports = {
     },
     {
       spotId: 5,
-      url: "https://images.homes.com/listings/215/9001393353-473632661/2705-cava-tirreni-st-henderson-nv-primaryphoto.jpg",
+      url: "https://torontolife.mblycdn.com/uploads/tl/2016/08/toronto-house-sold-53-cobden-street-1.jpg",
       preview: true,
     },
     {
       spotId: 5,
-      url: "https://spotimage33.com",
+      url: "https://spotimage334.com",
       preview: false,
     },
     {
